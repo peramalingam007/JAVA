@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:id="@+id/color_preview"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/color_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Color Name"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:padding="10dp"/>
+</LinearLayout>
