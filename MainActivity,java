@@ -1,0 +1,90 @@
+package com.example.colorpaletteanalyzer;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.SurfaceView;
+import android.widget.TextView;
+import android.graphics.Bitmap;
+import android.hardware.Camera;
+import android.view.View;
+import android.widget.Button;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.core.Core;
+import org.opencv.core.Scalar;
+
+public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+
+    private CameraBridgeViewBase cameraView;
+    private TextView colorNameText;
+    private View colorPreview;
+
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            System.out.println("OpenCV not loaded");
+        } else {
+            System.out.println("OpenCV loaded successfully");
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        cameraView = findViewById(R.id.camera_view);
+        colorNameText = findViewById(R.id.color_name);
+        colorPreview = findViewById(R.id.color_preview);
+
+        cameraView.setVisibility(SurfaceView.VISIBLE);
+        cameraView.setCvCameraViewListener(this);
+    }
+
+    @Override
+    public void onCameraViewStarted(int width, int height) {}
+
+    @Override
+    public void onCameraViewStopped() {}
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        Mat frame = inputFrame.rgba();
+
+        // Take the center pixel color
+        int centerX = frame.cols() / 2;
+        int centerY = frame.rows() / 2;
+        double[] colorValues = frame.get(centerY, centerX);
+
+        final int r = (int) colorValues[0];
+        final int g = (int) colorValues[1];
+        final int b = (int) colorValues[2];
+
+        final String colorName = ColorDetector.getColorName(r, g, b);
+
+        runOnUiThread(() -> {
+            colorNameText.setText(colorName + " (" + r + "," + g + "," + b + ")");
+            colorPreview.setBackgroundColor(android.graphics.Color.rgb(r, g, b));
+        });
+
+        return frame;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cameraView.enableView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cameraView.disableView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        cameraView.disableView();
+    }
+}
