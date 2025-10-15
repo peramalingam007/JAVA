@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'org.opencv:opencv-android:4.7.0'
+}
